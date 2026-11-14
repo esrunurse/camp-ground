@@ -8,6 +8,8 @@ dotenv.config({ path: "./config/config.env" });
 connectDB();
 
 const auth = require("./routes/auth");
+const campgrounds = require("./routes/campgrounds");
+const bookings = require("./routes/bookings");
 
 const app = express();
 
@@ -17,6 +19,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/v1/auth", auth);
+app.use("/api/v1/campgrounds", campgrounds);
+app.use("/api/v1/bookings", bookings);
 
 const PORT = process.env.PORT || 5003;
 
