@@ -6,8 +6,8 @@ const campgroundFields = {
   select: "name address tel",
 };
 
-const isBookingOwner = (booking, user) =>
-  booking.user.toString() === user.id;
+const isBookingOwnerOrAdmin = (booking, user) =>
+  booking.user.toString() === user.id || user.role === "admin";
 
 const isDateBeforeToday = (date) => {
   const today = new Date();
@@ -16,7 +16,13 @@ const isDateBeforeToday = (date) => {
 };
 
 exports.getBookings = async (req, res, next) => {
-  const filter = { user: req.user.id };
+  let filter = {};
+
+  if (req.user.role !== "admin") {
+    filter = { user: req.user.id };
+  } else if (req.params.campgroundId) {
+    filter = { campground: req.params.campgroundId };
+  }
 
   try {
     const bookings = await Booking.find(filter).populate(campgroundFields);
@@ -47,7 +53,7 @@ exports.getBooking = async (req, res, next) => {
       });
     }
 
-    if (!isBookingOwner(booking, req.user)) {
+    if (!isBookingOwnerOrAdmin(booking, req.user)) {
       return res.status(403).json({
         success: false,
         message: `User ${req.user.id} is not authorized to view this booking`,
@@ -122,7 +128,7 @@ exports.updateBooking = async (req, res, next) => {
       });
     }
 
-    if (!isBookingOwner(booking, req.user)) {
+    if (!isBookingOwnerOrAdmin(booking, req.user)) {
       return res.status(403).json({
         success: false,
         message: `User ${req.user.id} is not authorized to update this booking`,
@@ -171,5 +177,37 @@ exports.updateBooking = async (req, res, next) => {
     return res
       .status(500)
       .json({ success: false, message: "Cannot update Booking" });
+  }
+};
+
+exports.deleteBooking = async (req, res, next) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: `No booking with the id of ${req.params.id}`,
+      });
+    }
+
+    if (!isBookingOwnerOrAdmin(booking, req.user)) {
+      return res.status(403).json({
+        success: false,
+        message: `User ${req.user.id} is not authorized to delete this booking`,
+      });
+    }
+
+    await booking.deleteOne();
+
+    res.status(200).json({
+      success: true,
+      data: {},
+    });
+  } catch (error) {
+    console.log(error.stack);
+    return res
+      .status(500)
+      .json({ success: false, message: "Cannot delete Booking" });
   }
 };
