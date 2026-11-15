@@ -17,6 +17,11 @@ const CampgroundSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please add a telephone number"],
     },
+    pricePerNight: {
+      type: Number,
+      required: [true, "Please add a price per night"],
+      min: [0, "Price per night can not be negative"],
+    },
     createdAt: {
       type: Date,
       default: Date.now,

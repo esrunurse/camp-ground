@@ -89,9 +89,16 @@ exports.getCampground = async (req, res, next) => {
   }
 };
 
+const pickCampgroundFields = ({ name, address, tel, pricePerNight }) =>
+  Object.fromEntries(
+    Object.entries({ name, address, tel, pricePerNight }).filter(
+      ([, value]) => value !== undefined,
+    ),
+  );
+
 exports.createCampground = async (req, res, next) => {
   try {
-    const campground = await Campground.create(req.body);
+    const campground = await Campground.create(pickCampgroundFields(req.body));
     res.status(201).json({ success: true, data: campground });
   } catch (err) {
     console.log(err.stack);
@@ -103,7 +110,7 @@ exports.updateCampground = async (req, res, next) => {
   try {
     const campground = await Campground.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      pickCampgroundFields(req.body),
       {
         new: true,
         runValidators: true,

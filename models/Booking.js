@@ -25,6 +25,19 @@ const BookingSchema = new mongoose.Schema({
     ref: "Campground",
     required: true,
   },
+  totalPrice: {
+    type: Number,
+    min: 0,
+  },
+  promotionCode: {
+    type: mongoose.Schema.ObjectId,
+    ref: "PromotionCode",
+    default: null,
+  },
+  finalPrice: {
+    type: Number,
+    min: 0,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

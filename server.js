@@ -10,6 +10,7 @@ connectDB();
 const auth = require("./routes/auth");
 const campgrounds = require("./routes/campgrounds");
 const bookings = require("./routes/bookings");
+const promotionCodes = require("./routes/promotioncodes");
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(cookieParser());
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/campgrounds", campgrounds);
 app.use("/api/v1/bookings", bookings);
+app.use("/api/v1/promotioncodes", promotionCodes);
 
 const PORT = process.env.PORT || 5003;
 
