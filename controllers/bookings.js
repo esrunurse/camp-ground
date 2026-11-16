@@ -166,9 +166,6 @@ exports.addBooking = async (req, res, next) => {
     });
   } catch (error) {
     console.log(error.stack);
-    if (error.name === "ValidationError" || error.name === "CastError") {
-      return res.status(400).json({ success: false, message: error.message });
-    }
     return res
       .status(500)
       .json({ success: false, message: "Cannot create Booking" });
@@ -257,9 +254,6 @@ exports.updateBooking = async (req, res, next) => {
     });
   } catch (error) {
     console.log(error.stack);
-    if (error.name === "ValidationError" || error.name === "CastError") {
-      return res.status(400).json({ success: false, message: error.message });
-    }
     return res
       .status(500)
       .json({ success: false, message: "Cannot update Booking" });
